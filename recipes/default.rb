@@ -70,8 +70,10 @@ ruby_block "Checking that mysql is running" do
   end
 end
 
+mysql_bin_path=`ls -d  /usr/local/Cellar/mysql55/*/bin`.strip
+
 execute "set the root password to the default" do
-    command "mysqladmin -uroot password #{PASSWORD}"
-    not_if "mysql -uroot -p#{PASSWORD} -e 'show databases'"
+    command "#{mysql_bin_path}/mysqladmin -uroot password #{PASSWORD}"
+    not_if "#{mysql_bin_path}/mysql -uroot -p#{PASSWORD} -e 'show databases'"
 end
 
