@@ -30,7 +30,7 @@ PARENT_DATA_DIR = "/usr/local/var"
   end
 end
 
-package "mysql55" do
+homebrewalt_package "mysql55" do
   action [:install, :upgrade]
 end
 
