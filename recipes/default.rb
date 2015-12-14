@@ -75,6 +75,7 @@ mysql_path=`ls -d  /usr/local/Cellar/mysql55/*`.strip
 execute "set the root password to the default" do
     command "#{mysql_path}/bin/mysqladmin -uroot password #{PASSWORD}"
     not_if "#{mysql_path}/bin/mysql -uroot -p#{PASSWORD} -e 'show databases'"
+    only_if "#{mysql_path}/bin/mysql -uroot -e 'show databases'"
 end
 
 
