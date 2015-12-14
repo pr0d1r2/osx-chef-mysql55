@@ -78,5 +78,6 @@ execute "set the root password to the default" do
     only_if "#{mysql_path}/bin/mysql -uroot -e 'show databases'"
 end
 
-
-bundle_config "build.mysql2 -–with-mysql-config=#{mysql_path}/bin/mysql_config"
+execute "brew link mysql55 --force" do
+  not_if { File.exist?("/usr/local/bin/mysql") }
+end
