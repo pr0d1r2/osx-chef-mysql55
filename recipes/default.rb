@@ -79,4 +79,4 @@ execute "set the root password to the default" do
 end
 
 
-bundle_config "build.mysql2 --with-mysql-dir #{mysql_path}"
+bundle_config "build.mysql2 --with-mysql-lib=#{mysql_path}/lib --with-mysql-include=#{mysql_path}/include/mysql"
