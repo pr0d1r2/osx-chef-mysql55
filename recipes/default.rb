@@ -70,10 +70,12 @@ ruby_block "Checking that mysql is running" do
   end
 end
 
-mysql_bin_path=`ls -d  /usr/local/Cellar/mysql55/*/bin`.strip
+mysql_path=`ls -d  /usr/local/Cellar/mysql55/*`.strip
 
 execute "set the root password to the default" do
-    command "#{mysql_bin_path}/mysqladmin -uroot password #{PASSWORD}"
-    not_if "#{mysql_bin_path}/mysql -uroot -p#{PASSWORD} -e 'show databases'"
+    command "#{mysql_path}/bin/mysqladmin -uroot password #{PASSWORD}"
+    not_if "#{mysql_path}/bin/mysql -uroot -p#{PASSWORD} -e 'show databases'"
 end
 
+
+bundle_config "build.mysql2 --with-mysql-dir #{mysql_path}"
