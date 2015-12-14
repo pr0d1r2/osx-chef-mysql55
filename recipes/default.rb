@@ -37,7 +37,7 @@ package "homebrew/versions/mysql55" do
 end
 
 execute "copy over the plist" do
-    command %'cp /usr/local/Cellar/mysql55/5.*/homebrew.mxcl.mysql.plist ~/Library/LaunchAgents/'
+    command %'cp /usr/local/Cellar/mysql55/5.*/homebrew.mxcl.mysql55.plist ~/Library/LaunchAgents/'
     user node['current_user']
 end
 
