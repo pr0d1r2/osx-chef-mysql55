@@ -41,7 +41,7 @@ PARENT_DATA_DIR = "/usr/local/var"
 end
 
 if node['user'] && node['user']['id']
-  tap 'homebrew/versions'
+  homebrew_tap 'homebrew/versions'
 else
   homebrewalt_tap 'homebrew/versions'
 end
