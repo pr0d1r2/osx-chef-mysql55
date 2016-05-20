@@ -1,5 +1,13 @@
 include_recipe "homebrewalt::default"
 
+if node['user'] && node['user']['id']
+  user_name = node['user']['id']
+  home_dir = Etc.getpwnam(user_name).dir
+else
+  user_name = node['current_user']
+  home_dir = node['etc']['passwd'][user_name]['dir']
+end
+
 #http://solutions.treypiepmeier.com/2010/02/28/installing-mysql-on-snow-leopard-using-homebrew/
 require 'pathname'
 
@@ -9,7 +17,7 @@ require 'pathname'
             log "mysql55 plist found at #{plist_path}"
             execute "unload the plist (shuts down the daemon)" do
                 command %'launchctl unload -w #{plist_path}'
-                user node['current_user']
+                user user_name
             end
         else
             log "Did not find plist at #{plist_path} don't try to unload it"
@@ -21,11 +29,11 @@ PASSWORD = node["mysql55_root_password"] || node["mysql_root_password"]
 DATA_DIR = "/usr/local/var/mysql55"
 PARENT_DATA_DIR = "/usr/local/var"
 
-[ "/Users/#{node['current_user']}/Library/LaunchAgents",
+[ "#{home_dir}/Library/LaunchAgents",
   PARENT_DATA_DIR,
   DATA_DIR ].each do |dir|
   directory dir do
-    owner node['current_user']
+    owner user_name
     action :create
   end
 end
@@ -38,7 +46,7 @@ end
 
 execute "copy over the plist" do
     command %'cp /usr/local/Cellar/mysql55/5.*/homebrew.mxcl.mysql55.plist ~/Library/LaunchAgents/'
-    user node['current_user']
+    user user_name
 end
 
 ruby_block "mysql_install_db" do
@@ -46,7 +54,7 @@ ruby_block "mysql_install_db" do
     active_mysql = Pathname.new("/usr/local/bin/mysql55").realpath
     basedir = (active_mysql + "../../").to_s
     data_dir = "/usr/local/var/mysql55"
-    installdb = Mixlib::ShellOut.new("mysql_install_db --verbose --user=#{node['current_user']} --basedir=#{basedir} --datadir=#{DATA_DIR} --tmpdir=/tmp && chown #{node['current_user']} #{data_dir}")
+    installdb = Mixlib::ShellOut.new("mysql_install_db --verbose --user=#{user_name} --basedir=#{basedir} --datadir=#{DATA_DIR} --tmpdir=/tmp && chown #{user_name} #{data_dir}")
     installdb.run_command
     if installdb.exitstatus != 0
       raise("Failed initializing mysqldb")
@@ -57,7 +65,7 @@ end
 
 execute "start the daemon" do
   command %'launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mysql55.plist'
-  user node['current_user']
+  user user_name
 end
 
 ruby_block "Checking that mysql is running" do
