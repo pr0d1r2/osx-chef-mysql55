@@ -94,4 +94,5 @@ end
 
 execute "brew link mysql55 --force" do
   not_if { File.exist?("/usr/local/bin/mysql") }
+  user user_name
 end
