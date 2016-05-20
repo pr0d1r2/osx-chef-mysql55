@@ -1,9 +1,11 @@
-include_recipe "homebrewalt::default"
-
 if node['user'] && node['user']['id']
+  include_recipe 'homebrew::default'
+
   user_name = node['user']['id']
   home_dir = Etc.getpwnam(user_name).dir
 else
+  include_recipe "homebrewalt::default"
+
   user_name = node['current_user']
   home_dir = node['etc']['passwd'][user_name]['dir']
 end
@@ -38,7 +40,11 @@ PARENT_DATA_DIR = "/usr/local/var"
   end
 end
 
-homebrewalt_tap "homebrew/versions"
+if node['user'] && node['user']['id']
+  tap 'homebrew/versions'
+else
+  homebrewalt_tap 'homebrew/versions'
+end
 
 package "homebrew/versions/mysql55" do
   action [:install, :upgrade]
